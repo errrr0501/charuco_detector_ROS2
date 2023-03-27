@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+
+<launch>
+    <arg name="robot_ip" default="192.168.1.100"/>
+    <arg name="image_topic" default="/camera/color/image_raw"/>
+    <arg name="camera_info_topic" default="/camera/color/camera_info" />
+    <arg name="base_link" default="/base_link" />
+    <arg name="tip_link" default="/tool0_controller" />
+    <arg name="eye_in_hand_mode" default="True" />
+    <arg name="customize" default="false" />
+    <arg name="filename" default="" />
+
+    
+
+
+    <!--<include file="$(find realsense2_camera)/launch/rs_hand_eye.launch">
+    </include>-->
+
+    <include file="$(find ur_robot_driver)/launch/ur5_bringup.launch">
+        <arg name="robot_ip" value="$(arg robot_ip)" />
+    </include>
+
+    <include file="$(find ur5_moveit_config)/launch/moveit_planning_execution.launch">
+    </include>
+
+    <include file="$(find flexbe_app)/launch/flexbe_full.launch" output="screen">
+    </include>
+
+    <node pkg="visp_hand2eye_calibration" type="visp_hand2eye_calibration_calibrator" name="visp_hand2eye_calibration_calibrator">
+    </node>
+    
+    <include file="$(find charuco_detector)/launch/charuco_detector.launch">
+        <arg name="image_topic" value="$(arg image_topic)" />
+        <arg name="camera_info_topic" value="$(arg camera_info_topic)" />
+    </include>
+
+    <node pkg="charuco_detector" type="hand_eye_trans.py" name="charuco_detector" output="screen">
+        <param name="eye_in_hand_mode" value="$(arg eye_in_hand_mode)" />
+        <param name="customize" value="$(arg customize)" />
+        <param name="filename" value="$(arg filename)" />
+        <param name="base_link" value="$(arg base_link)" />
+        <param name="tip_link" value="$(arg tip_link)" />
+    </node>
+
+    <node pkg="rviz" type="rviz" name="rviz">
+    </node>
+</launch>
