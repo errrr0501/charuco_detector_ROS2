@@ -7,23 +7,27 @@
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   <includes>   <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-#include <ros/ros.h>
-#include <charuco_detector/charuco_detector.h>
+#include "rclcpp/rclcpp.hpp"
+#include "charuco_detector/charuco_detector.hpp"
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   </includes>  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
 // ###################################################################################   <main>   ##############################################################################
 int main(int argc, char **argv) {
-	ros::init(argc, argv, "charuco_detector");
+	rclcpp::init(argc, argv);
+    auto node_handle = std::make_shared<rclcpp::Node>("charuco_detector");
+    // auto private_node_handle = std::make_shared<rclcpp::Node>("charuco_detector", "~");
+	auto private_node_handle = std::make_shared<rclcpp::Node>("charuco_detector");
 
-	ros::NodeHandlePtr node_handle(new ros::NodeHandle());
-	ros::NodeHandlePtr private_node_handle(new ros::NodeHandle("~"));
+	// ChArUcoDetector chArUcoDetector;
+	auto charuco_detector = std::make_shared<ChArUcoDetector>();
+	// charuco_detector->init();
+	charuco_detector->setupConfigurationFromParameterServer(node_handle, private_node_handle);
+	charuco_detector->startDetection();
 
-	charuco_detector::ChArUcoDetector chArUcoDetector;
-	chArUcoDetector.setupConfigurationFromParameterServer(node_handle, private_node_handle);
-	chArUcoDetector.startDetection();
-
+	rclcpp::spin(charuco_detector);
+    rclcpp::shutdown();
 	return 0;
 }
 // ###################################################################################   </main>   #############################################################################
