@@ -16,16 +16,18 @@
 // ###################################################################################   <main>   ##############################################################################
 int main(int argc, char **argv) {
 	rclcpp::init(argc, argv);
-    auto node_handle = std::make_shared<rclcpp::Node>("charuco_detector");
-    // auto private_node_handle = std::make_shared<rclcpp::Node>("charuco_detector", "~");
-	auto private_node_handle = std::make_shared<rclcpp::Node>("charuco_detector");
+    // auto node_handle = std::make_shared<rclcpp::Node>("charuco_detector");
+    // // auto private_node_handle = std::make_shared<rclcpp::Node>("charuco_detector", "~");
+	// auto private_node_handle = std::make_shared<rclcpp::Node>("charuco_detector");
 
 	// ChArUcoDetector chArUcoDetector;
 	auto charuco_detector = std::make_shared<ChArUcoDetector>();
 	// charuco_detector->init();
-	charuco_detector->setupConfigurationFromParameterServer(node_handle, private_node_handle);
+	charuco_detector->setupConfigurationFromParameterServer();
 	charuco_detector->startDetection();
-
+	// auto on_init = [&]() {
+    // 	charuco_detector->startDetection();
+	// };
 	rclcpp::spin(charuco_detector);
     rclcpp::shutdown();
 	return 0;

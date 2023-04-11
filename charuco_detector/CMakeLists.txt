@@ -129,7 +129,7 @@ install(FILES package.xml
 DESTINATION share/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME}/)
+install(DIRECTORY launch config yaml DESTINATION share/${PROJECT_NAME}/)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 #include <list>
-
+#include <iostream>
 
 #include <ini/ini.h>
 // #include <INIReader.h>
@@ -56,8 +56,7 @@ public:
    */
 	~ChArUcoDetector();
 
-	virtual void setupConfigurationFromParameterServer(const rclcpp::Node::SharedPtr& node_handle, const rclcpp::Node::SharedPtr& private_node_handle);
-	// const std::shared_ptr<rclcpp::Node>& node, const std::shared_ptr<rclcpp::Node>& private_node
+	virtual void setupConfigurationFromParameterServer();
 	virtual void startDetection();
 	void cameraInfoCallback(const sensor_msgs::msg::CameraInfo::ConstSharedPtr &_msg);
 	void imageCallback(const sensor_msgs::msg::Image::ConstSharedPtr &_msg);
@@ -104,19 +103,21 @@ private:
 	double tf_broadcaster_republish_rate_;
 	int imageQueueSize;
 	bool imageLatch;
+
+	std::string file_path_;
 	std::string sensor_frame_override_;
 	std::string charuco_tf_frame_;
 	std::string image_topic_;
 	std::string camera_info_topic_;
 	std::string image_results_publish_topic_;
 	std::string charuco_pose_publish_topic_;
+	
+	std::vector<double> distortion;
+	std::vector<double> intrinsic;
 	sensor_msgs::msg::CameraInfo::ConstSharedPtr camera_info_;
 	cv::Mat camera_intrinsics_matrix;
 	cv::Mat camera_distortion_coefficients_matrix;
-	// std::shared_ptr<rclcpp::Node> node_handle_;
-	// std::shared_ptr<rclcpp::Node> private_node_handle_;
-	// std::shared_ptr<rclcpp::Node> node_handle_;
-	// std::shared_ptr<rclcpp::Node> private_node_handle_;
+
 	rclcpp::Node::SharedPtr node_handle_;
 	rclcpp::Node::SharedPtr private_node_handle_;
 	std::shared_ptr<image_transport::ImageTransport> image_transport_ptr_;
@@ -127,8 +128,8 @@ private:
 	// ros::Subscriber camera_info_subscriber_;
 	rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr charuco_pose_publisher_;
 	// ros::Publisher charuco_pose_publisher_;
-	std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;
-	std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+	std::unique_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;
+	std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 	geometry_msgs::msg::TransformStamped transform_stamped_;
 	bool transform_stamped_valid_;
 };
