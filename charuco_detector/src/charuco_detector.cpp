@@ -215,7 +215,6 @@ void ChArUcoDetector::getCameraCalibrationCoefficient() {
 	intrinsic.push_back(std::stod(Camera_KD.Get("Intrinsic", "2_0"))); 
 	intrinsic.push_back(std::stod(Camera_KD.Get("Intrinsic", "2_1"))); 
 	intrinsic.push_back(std::stod(Camera_KD.Get("Intrinsic", "2_2"))); 
-	std::cout<<intrinsic[0]<<std::endl;
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			camera_intrinsics_matrix.at<double>(i, j) = intrinsic[i * 3 + j];
@@ -260,7 +259,6 @@ void ChArUcoDetector::imageCallback(const sensor_msgs::msg::Image::ConstSharedPt
 		cv::Mat image_grayscale;
 		bool dynamic_range_applied = false;
 		if ((_msg->encoding == sensor_msgs::image_encodings::MONO16 || use_dynamic_range_)) {
-			std::cout<<"dynamic_range_applied"<<std::endl;
 			try {
 				image_grayscale = cv_bridge::toCvCopy(_msg, sensor_msgs::image_encodings::MONO16)->image;
 				if (use_median_blur_) applyMedianBlur(image_grayscale);
